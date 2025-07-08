@@ -51,7 +51,8 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
             onPressed: () {
-              // Handle search tap
+              // Navigate to the SearchPage when the search icon is tapped
+              context.go('/search');
             },
           ),
           IconButton(
@@ -68,29 +69,34 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Search Bar Section
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search here...',
-                  hintStyle: TextStyle(fontSize: screenWidth * 0.035 / textScaleFactor),
-                  prefixIcon: Icon(Icons.search, color: Colors.grey, size: screenWidth * 0.05),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(screenWidth * 0.025),
-                    borderSide: BorderSide.none, // No border line
+            // Search Bar Section - Made clickable
+            GestureDetector(
+              onTap: () {
+                // Navigate to the SearchPage when the search bar is tapped
+                context.go('/search');
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
+                child: TextField(
+                  enabled: false, // Disable TextField interaction directly to allow GestureDetector to handle tap
+                  decoration: InputDecoration(
+                    hintText: 'Search here...',
+                    hintStyle: TextStyle(fontSize: screenWidth * 0.035 / textScaleFactor),
+                    prefixIcon: Icon(Icons.search, color: Colors.grey, size: screenWidth * 0.05),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(screenWidth * 0.025),
+                      borderSide: BorderSide.none, // No border line
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200], // Light grey background
+                    contentPadding: EdgeInsets.symmetric(vertical: screenHeight * 0.015), // Responsive padding
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200], // Light grey background
-                  contentPadding: EdgeInsets.symmetric(vertical: screenHeight * 0.015), // Responsive padding
+                  style: TextStyle(fontSize: screenWidth * 0.04 / textScaleFactor),
+                  onSubmitted: (value) {
+                    // This will ideally not be called if TextField is disabled, but kept for completeness
+                    debugPrint('Search submitted: $value');
+                  },
                 ),
-                style: TextStyle(fontSize: screenWidth * 0.04 / textScaleFactor),
-                onSubmitted: (value) {
-                  // Handle search submission
-                  debugPrint('Search submitted: $value');
-                  // You might navigate to a search results page here
-                  // context.go('/search_results?query=$value');
-                },
               ),
             ),
 

@@ -6,8 +6,10 @@ import 'package:provider/provider.dart';
 import 'screens/home_page.dart';
 import 'screens/detail_product_page.dart';
 import 'providers/app_data_provider.dart';
-import 'screens/detailed_news_page.dart'; // <--- CHANGE THIS LINE to match your file name
+import 'screens/detail_news_page.dart';
+import 'screens/detailed_news_page.dart';// Corrected import for DetailNewsPage
 import 'screens/signin_page.dart'; // Import your SignInPage
+import 'screens/search.dart'; // Import the SearchPage
 
 // Define a global key for GoRouter for navigation from non-widget contexts
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -40,7 +42,7 @@ final GoRouter _router = GoRouter(
           path: 'news_detail/:newsId', // Route for individual detailed news
           builder: (BuildContext context, GoRouterState state) {
             final String? newsId = state.pathParameters['newsId'];
-            return DetailNewsPage(newsId: newsId); // This should now find the class
+            return DetailNewsPage(newsId: newsId); // Pass newsId if your DetailNewsPage uses it
           },
         ),
       ],
@@ -50,6 +52,13 @@ final GoRouter _router = GoRouter(
       path: '/signin', // This is the route path for your sign-in page
       builder: (BuildContext context, GoRouterState state) {
         return const SignInPage();
+      },
+    ),
+    // Route for the SearchPage
+    GoRoute(
+      path: '/search',
+      builder: (BuildContext context, GoRouterState state) {
+        return const SearchPage();
       },
     ),
     // Example route for /detail, as used in your HomePage's cart button
