@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart'; // Keep go_router import if you plan to use context.pop()
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:ecommerce/providers/favorite_provider.dart'; // Ensure this path is correct
+import 'package:ecommerce/screens/seller_info.dart'; // Import the InfoSellerPage
 
 class DetailProductPage extends StatelessWidget {
   final String? productId;
@@ -17,6 +20,10 @@ class DetailProductPage extends StatelessWidget {
     final String productName = extra?['productName'] ?? 'TMA-2HD Wireless'; // Default product name
     final String productImageUrl = extra?['imageUrl'] ?? 'assets/images/headphone.jpg'; // Default image
     final String productPrice = extra?['newPrice'] ?? 'Rp 1.500.000'; // Default price
+
+    // Access FavoriteProvider
+    final favoriteProvider = Provider.of<FavoriteProvider>(context);
+    final bool isProductFavorite = favoriteProvider.isFavorite(productId ?? '');
 
     // Sample data for reviews (copied from detail_news_page.dart, adjusted for products)
     final List<Map<String, String>> reviews = [
@@ -83,6 +90,24 @@ class DetailProductPage extends StatelessWidget {
             icon: const Icon(Icons.share, color: Colors.black), // Share icon
             onPressed: () {
               debugPrint('Share tapped');
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              isProductFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isProductFavorite ? Colors.red : Colors.black,
+              size: screenWidth * 0.06,
+            ),
+            onPressed: () {
+              if (productId != null) {
+                favoriteProvider.toggleFavorite(productId!);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(isProductFavorite ? 'Removed from favorites!' : 'Added to favorites!'),
+                    duration: const Duration(milliseconds: 800),
+                  ),
+                );
+              }
             },
           ),
           IconButton(
@@ -191,58 +216,63 @@ class DetailProductPage extends StatelessWidget {
             SizedBox(height: screenHeight * 0.02),
 
             // Shop Information (Copied from 009.png)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-              child: Container(
-                padding: EdgeInsets.all(screenWidth * 0.03),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(screenWidth * 0.02),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 3,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: screenWidth * 0.06,
-                      backgroundImage: const NetworkImage('https://placehold.co/100x100/CCCCCC/000000?text=Shop'), // Placeholder for shop logo
-                    ),
-                    SizedBox(width: screenWidth * 0.03),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Shop Larson Electronic',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: screenWidth * 0.04 / textScaleFactor,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'Official Store',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: screenWidth * 0.035 / textScaleFactor,
-                                ),
-                              ),
-                              SizedBox(width: screenWidth * 0.01),
-                              Icon(Icons.verified, color: Colors.blue, size: screenWidth * 0.04),
-                            ],
-                          ),
-                        ],
+            GestureDetector( // This is the GestureDetector for navigation
+              onTap: () {
+                context.push('/seller_info'); // Navigates to the seller info page
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+                child: Container(
+                  padding: EdgeInsets.all(screenWidth * 0.03),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: const Offset(0, 2),
                       ),
-                    ),
-                    Icon(Icons.arrow_forward_ios, color: Colors.grey, size: screenWidth * 0.04),
-                  ],
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: screenWidth * 0.06,
+                        backgroundImage: const NetworkImage('https://placehold.co/100x100/CCCCCC/000000?text=Shop'), // Placeholder for shop logo
+                      ),
+                      SizedBox(width: screenWidth * 0.03),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Shop Larson Electronic',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: screenWidth * 0.04 / textScaleFactor,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  'Official Store',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: screenWidth * 0.035 / textScaleFactor,
+                                  ),
+                                ),
+                                SizedBox(width: screenWidth * 0.01),
+                                Icon(Icons.verified, color: Colors.blue, size: screenWidth * 0.04),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.grey, size: screenWidth * 0.04),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -269,7 +299,7 @@ The speaker unit contains a diaphragm that is precision-grown from NAC Audio bio
 
 The speaker unit contains a diaphragm that is precision-grown from NAC Audio bio-cellulose, and allowing the sound-producing diaphragm to vibrate without the levels of distortion found in other speakers.
 
-The speaker unit contains a diaphragm that is precision-grown from NAC Audio bio-cellulose, making it stiffer, lighter and stronger than regular PET speaker units, and allowing the sound-producing diaphragm to vibrate without the levels of distortion found in other speakers.
+The speaker unit contains a diaphragm that that is precision-grown from NAC Audio bio-cellulose, making it stiffer, lighter and stronger than regular PET speaker units, and allowing the sound-producing diaphragm to vibrate without the levels of distortion found in other speakers.
 
 The speaker unit contains a diaphragm that is precision-grown from NAC Audio bio-cellulose, making it stiffer, lighter and stronger than regular PET speaker units, and allowing the sound-producing diaphragm to vibrate without the levels of distortion found in other speakers.
                 ''',
@@ -406,7 +436,7 @@ The speaker unit contains a diaphragm that is precision-grown from NAC Audio bio
         ),
       ),
       // Persistent bottom bar with Add and Favorite buttons (from 009.png)
-      bottomSheet: _buildPersistentBottomBar(screenWidth, screenHeight, textScaleFactor),
+      bottomSheet: _buildPersistentBottomBar(context, screenWidth, screenHeight, textScaleFactor, productId ?? ''), // Pass context and productId
     );
   }
 
@@ -569,7 +599,11 @@ The speaker unit contains a diaphragm that is precision-grown from NAC Audio bio
   }
 
   // Persistent bottom bar with Add and Favorite buttons (Copied from 009.png)
-  Widget _buildPersistentBottomBar(double screenWidth, double screenHeight, double textScaleFactor) {
+  Widget _buildPersistentBottomBar(BuildContext context, double screenWidth, double screenHeight, double textScaleFactor, String productId) {
+    // Access FavoriteProvider here
+    final favoriteProvider = Provider.of<FavoriteProvider>(context);
+    final bool isProductFavorite = favoriteProvider.isFavorite(productId);
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
       decoration: BoxDecoration(
@@ -591,6 +625,9 @@ The speaker unit contains a diaphragm that is precision-grown from NAC Audio bio
             child: ElevatedButton.icon(
               onPressed: () {
                 debugPrint('Add button tapped');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Product added to cart!')),
+                );
                 // Implement add to cart logic
               },
               icon: Icon(Icons.add, color: Colors.white, size: screenWidth * 0.05),
@@ -617,8 +654,14 @@ The speaker unit contains a diaphragm that is precision-grown from NAC Audio bio
             flex: 1,
             child: ElevatedButton(
               onPressed: () {
-                debugPrint('Favorite button tapped');
-                // Implement favorite logic
+                debugPrint('Favorite button tapped for product ID: $productId');
+                favoriteProvider.toggleFavorite(productId); // Toggle favorite status
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(isProductFavorite ? 'Removed from favorites!' : 'Added to favorites!'),
+                    duration: const Duration(milliseconds: 800),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red, // Red for favorite/heart
@@ -627,7 +670,11 @@ The speaker unit contains a diaphragm that is precision-grown from NAC Audio bio
                   borderRadius: BorderRadius.circular(screenWidth * 0.025),
                 ),
               ),
-              child: Icon(Icons.favorite_border, color: Colors.white, size: screenWidth * 0.05),
+              child: Icon(
+                isProductFavorite ? Icons.favorite : Icons.favorite_border, // Dynamically change icon
+                color: Colors.white,
+                size: screenWidth * 0.05,
+              ),
             ),
           ),
         ],

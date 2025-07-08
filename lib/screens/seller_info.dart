@@ -1,9 +1,8 @@
-// lib/screens/info_seller_page.dart
-
+import 'package:ecommerce/providers/favorite_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class InfoSellerPage extends StatelessWidget {
+class InfoSellerPage extends StatelessWidget { // Class name from your provided code
   const InfoSellerPage({super.key});
 
   @override
@@ -66,7 +65,7 @@ class InfoSellerPage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
-            context.pop(); // Go back to the previous screen
+            context.pop(); // Go back to the previous screen - THIS IS THE BACK BUTTON
           },
         ),
         title: Text(
@@ -103,7 +102,7 @@ class InfoSellerPage extends StatelessWidget {
                 children: [
                   // Seller Info Section
                   Padding(
-                    padding: EdgeInsets.all(screenWidth * 0.04),
+                    padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04), // Adjusted padding
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
