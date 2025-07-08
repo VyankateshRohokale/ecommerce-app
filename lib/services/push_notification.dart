@@ -1,14 +1,8 @@
+// lib/services/push_notification.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:go_router/go_router.dart'; // IMP : this is for navigation 
-
-// You'll need to define how to access your GoRouter instance.
-// A common way is to pass the router instance or a Navigator key.
-// For simplicity in this service, we will assume GoRouter.of(context)
-// can be used if a BuildContext is provided, or we can use a global navigator key.
-// For now, let's assume we can get the router from context when needed,
-// or that the navigation will be handled by a function passed in.
+import 'package:go_router/go_router.dart';
 
 class PushNotificationService extends ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -17,11 +11,9 @@ class PushNotificationService extends ChangeNotifier {
   String? _fcmToken;
   String? get fcmToken => _fcmToken;
 
-  // Constructor to receive the flutterLocalNotificationsPlugin instance
   PushNotificationService({required FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin})
       : _flutterLocalNotificationsPlugin = flutterLocalNotificationsPlugin;
 
-  // This method will be called from MyApp's initState
   Future<void> initializeNotificationHandlers() async {
     // Request permissions for iOS/macOS
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
@@ -40,7 +32,12 @@ class PushNotificationService extends ChangeNotifier {
     // Get FCM token
     _fcmToken = await _firebaseMessaging.getToken();
     print("FCM Token: $_fcmToken");
-    notifyListeners(); // Notify listeners when token is available
+    notifyListeners();
+
+    // *** IMPORTANT: Subscribe to the topic here ***
+    await _firebaseMessaging.subscribeToTopic('all_users');
+    print("Subscribed to topic: all_users");
+
 
     // Listen for token refresh
     _firebaseMessaging.onTokenRefresh.listen((newToken) {
@@ -48,6 +45,7 @@ class PushNotificationService extends ChangeNotifier {
       print("FCM Token Refreshed: $_fcmToken");
       notifyListeners();
       // TODO: Send the new token to your backend server if you have one
+      // And resubscribe to topics if necessary, though FCM usually handles this.
     });
 
     // Handle messages when the app is in the foreground
@@ -58,21 +56,25 @@ class PushNotificationService extends ChangeNotifier {
       if (message.notification != null) {
         print('Message also contained a notification: ${message.notification}');
         _showLocalNotification(message); // Show a local notification using flutter_local_notifications
+      } else {
+        // Handle data-only messages in foreground if needed
+        print('Foreground message has no notification payload, only data.');
+        // You might want to show a local notification from data here too
+        if (message.data['title'] != null && message.data['body'] != null) {
+            _showLocalNotificationFromData(message);
+        }
       }
     });
 
     // Handle messages when the app is opened from a terminated state
-    // This is called when the app is launched from a notification tap
     _firebaseMessaging.getInitialMessage().then((RemoteMessage? message) {
       if (message != null) {
         print('App opened from terminated state by notification: ${message.data}');
-        // Delaying navigation slightly to ensure router is ready
         Future.delayed(Duration(milliseconds: 500), () => _handleNotificationTap(message));
       }
     });
 
     // Handle messages when the app is opened from a background state
-    // This is called when the app is running in the background and a notification is tapped
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('App opened from background by notification: ${message.data}');
       _handleNotificationTap(message);
@@ -99,6 +101,7 @@ class PushNotificationService extends ChangeNotifier {
             priority: Priority.high,
             ticker: 'ticker',
           ),
+          iOS: const DarwinNotificationDetails(), // Add iOS details
         ),
         // Pass data as payload for handling taps
         payload: message.data['route'] ?? '/', // Default to home if no route
@@ -106,34 +109,56 @@ class PushNotificationService extends ChangeNotifier {
     }
   }
 
+  // New helper for data-only foreground messages
+  void _showLocalNotificationFromData(RemoteMessage message) {
+    // Use data payload for title and body if notification object is absent
+    String? title = message.data['title'];
+    String? body = message.data['body'];
+
+    if (title != null && body != null) {
+      _flutterLocalNotificationsPlugin.show(
+        message.hashCode, // Unique ID for the notification
+        title,
+        body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            'high_importance_channel', // Make sure this channel exists and is configured
+            'High Importance Notifications',
+            channelDescription: 'This channel is used for important notifications.',
+            importance: Importance.max,
+            priority: Priority.high,
+            // icon: 'ic_notification', // You might need to specify a default icon if not using android.smallIcon
+          ),
+          iOS: const DarwinNotificationDetails(),
+        ),
+        payload: message.data['route'] ?? '/',
+      );
+    }
+  }
+
+
   // Helper to handle navigation when a notification is tapped
   void _handleNotificationTap(RemoteMessage message) {
-    // Assuming your notification payload contains a 'route' field
-    // e.g., {'route': '/product_detail/123', 'productId': '123'}
     final String? route = message.data['route'];
     if (route != null) {
-      // For go_router, if you can't get context directly,
-      // you need a global key for the navigator or access the router directly.
-      // Since _router is global in main.dart, we can use it.
-      // Make sure the _router instance in main.dart is accessible.
-      // Alternatively, if you're navigating from a widget, you'd do:
-      // GoRouter.of(context).go(route, extra: message.data);
-      // For a service, it's trickier without a global key.
-      // One approach is to pass a callback from main.dart to this service for navigation.
-      // For demonstration, let's just print.
       print('Attempting to navigate to: $route with data: ${message.data}');
-      // A common pattern for services without context is to use a global key for GoRouter
-      // or to have the service emit an event that a widget listens to for navigation.
-      // For direct navigation in this setup:
-      // You could pass the router instance to the service during creation.
-      // For this example, let's assume `_router` from main.dart is accessible or
-      // that we're relying on the `onDidReceiveNotificationResponse` in main.dart.
-      // If direct navigation from service is a must, you'll need `navigatorKey` in go_router:
-      // import 'package:go_router/go_router.dart';
-      // final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-      // Then in MyApp:
-      // routerConfig: GoRouter(navigatorKey: navigatorKey, ...);
-      // And here: navigatorKey.currentState?.context.go(route, extra: message.data);
+      // Here's where you need to hook into GoRouter.
+      // Option 1: Global Navigator Key (Recommended for services)
+      // If you've defined: `final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();`
+      // in main.dart and used it in GoRouter(navigatorKey: _rootNavigatorKey, ...), then:
+      // _rootNavigatorKey.currentState?.context.go(route, extra: message.data);
+
+      // Option 2: Passing the router instance (less common but possible)
+      // If you pass the _router instance from main.dart to PushNotificationService
+      // during its creation, you could call _router.go(...).
+
+      // For now, let's just print. For actual navigation, you'll need one of the above.
     }
+  }
+
+  // You might also want a method to unsubscribe from a topic
+  Future<void> unsubscribeFromTopic(String topic) async {
+    await _firebaseMessaging.unsubscribeFromTopic(topic);
+    print("Unsubscribed from topic: $topic");
   }
 }

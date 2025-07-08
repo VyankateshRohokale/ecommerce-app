@@ -1,13 +1,18 @@
-// lib/screens/mega_mall_home_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/app_data_provider.dart'; // Import your provider
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget { // Changed to StatefulWidget
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0; // State variable for the selected bottom navigation item
 
   @override
   Widget build(BuildContext context) {
@@ -329,7 +334,7 @@ class HomePage extends StatelessWidget {
                   _buildProductCard(
                     context,
                     'TMX 210 Wireless',
-                    'assets/images/headphone.jpg', // Changed to local asset (assuming drill is now headphones)
+                    'assets/images/headphone.jpg', // Changed to local asset (assuming drill is also now headphones)
                     'Rp 1.000.000',
                     'Rp 750.000',
                     '25%',
@@ -389,8 +394,8 @@ class HomePage extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Handle view all news
-                  context.go('/detail'); // Example navigation
+                  // Handle view all news - Navigate to the main News listing page
+                  context.go('/news');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -413,6 +418,7 @@ class HomePage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex, // Use the state variable
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
@@ -435,6 +441,25 @@ class HomePage extends StatelessWidget {
             label: 'Profile',
           ),
         ],
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index; // Update the selected index
+          });
+          switch (index) {
+            case 0: // Home
+              context.go('/'); // Navigate to the root (HomePage)
+              break;
+            case 1: // Wishlist
+            // context.go('/wishlist'); // You might need to define this route
+              break;
+            case 2: // My Order
+            // context.go('/my_order'); // You might need to define this route
+              break;
+            case 3: // Profile
+              context.go('/signin'); // Navigate to the sign-in page
+              break;
+          }
+        },
       ),
     );
   }
@@ -601,50 +626,56 @@ class HomePage extends StatelessWidget {
   // Helper method to build news cards
   Widget _buildNewsCard(
       String title, String description, String imageUrl, double screenWidth, double screenHeight, double textScaleFactor) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(screenWidth * 0.025),
-            child: Image.asset( // Changed from Image.network to Image.asset
-              imageUrl, // This will now be 'assets/images/news.png'
-              width: screenWidth * 0.25, // Responsive width
-              height: screenWidth * 0.2, // Responsive height
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: screenWidth * 0.25,
-                  height: screenWidth * 0.2,
-                  color: Colors.grey[300],
-                  child: Icon(Icons.broken_image, color: Colors.grey[600]),
-                );
-              },
+    return GestureDetector( // Added GestureDetector for tap functionality
+      onTap: () {
+        // Navigate to the NewsPage when a news card is tapped
+        context.go('/news'); // Navigate to the main News listing page
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(screenWidth * 0.025),
+              child: Image.asset( // Changed from Image.network to Image.asset
+                imageUrl, // This will now be 'assets/images/news.png'
+                width: screenWidth * 0.25, // Responsive width
+                height: screenWidth * 0.2, // Responsive height
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: screenWidth * 0.25,
+                    height: screenWidth * 0.2,
+                    color: Colors.grey[300],
+                    child: Icon(Icons.broken_image, color: Colors.grey[600]),
+                  );
+                },
+              ),
             ),
-          ),
-          SizedBox(width: screenWidth * 0.025),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: screenWidth * 0.038 / textScaleFactor),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: screenHeight * 0.005),
-                Text(
-                  description,
-                  style: TextStyle(color: Colors.grey, fontSize: screenWidth * 0.03 / textScaleFactor),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+            SizedBox(width: screenWidth * 0.025),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: screenWidth * 0.038 / textScaleFactor),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: screenHeight * 0.005),
+                  Text(
+                    description,
+                    style: TextStyle(color: Colors.grey, fontSize: screenWidth * 0.03 / textScaleFactor),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

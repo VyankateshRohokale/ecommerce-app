@@ -127,79 +127,86 @@ class NewsPage extends StatelessWidget {
       double screenWidth,
       double screenHeight,
       double textScaleFactor) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.01),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(screenWidth * 0.02),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              spreadRadius: 1,
-              blurRadius: 3,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(screenWidth * 0.03),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: screenWidth * 0.04 / textScaleFactor,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: screenHeight * 0.005),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: screenWidth * 0.035 / textScaleFactor,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: screenHeight * 0.01),
-                    Text(
-                      date,
-                      style: TextStyle(
-                        color: Colors.grey[400],
-                        fontSize: screenWidth * 0.03 / textScaleFactor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: screenWidth * 0.03),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(screenWidth * 0.02),
-                child: Image.asset( // Changed from Image.network to Image.asset
-                  imageUrl, // This will now be 'assets/images/news.png'
-                  width: screenWidth * 0.25, // Square image as in the reference
-                  height: screenWidth * 0.25, // Square image as in the reference
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: screenWidth * 0.25,
-                      height: screenWidth * 0.25,
-                      color: Colors.grey[300],
-                      child: Icon(Icons.broken_image, color: Colors.grey[600]),
-                    );
-                  },
-                ),
+    return GestureDetector( // Added GestureDetector for tap functionality
+      onTap: () {
+        // Navigate to the DetailNewsPage when a news item is tapped
+        // You can pass the actual news ID here if you have dynamic data
+        context.go('/news_detail/someNewsId'); // Example: passing a placeholder ID
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.01),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(screenWidth * 0.02),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 3,
+                offset: const Offset(0, 2),
               ),
             ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(screenWidth * 0.03),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: screenWidth * 0.04 / textScaleFactor,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: screenHeight * 0.005),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: screenWidth * 0.035 / textScaleFactor,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: screenHeight * 0.01),
+                      Text(
+                        date,
+                        style: TextStyle(
+                          color: Colors.grey[400],
+                          fontSize: screenWidth * 0.03 / textScaleFactor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: screenWidth * 0.03),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                  child: Image.asset( // Changed from Image.network to Image.asset
+                    imageUrl, // This will now be 'assets/images/news.png'
+                    width: screenWidth * 0.25, // Square image as in the reference
+                    height: screenWidth * 0.25, // Square image as in the reference
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: screenWidth * 0.25,
+                        height: screenWidth * 0.25,
+                        color: Colors.grey[300],
+                        child: Icon(Icons.broken_image, color: Colors.grey[600]),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
