@@ -1,3 +1,4 @@
+import 'package:ecommerce/screens/news_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../screens/home_page.dart';
 import '../screens/detail_product_page.dart'; // Corrected import
 import '../providers/app_data_provider.dart';
+import '../screens/detailed_news_page.dart';
 
 // Define your GoRouter instance
 final GoRouter _router = GoRouter(
@@ -12,7 +14,7 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const HomePage();
+        return const DetailNewsPage();
       },
       routes: <RouteBase>[
         // Example: Navigate to a product detail page
