@@ -104,7 +104,7 @@ class HomePage extends StatelessWidget {
                     alignment: Alignment.center, // Center the image within the box
                   ),
                 ),
-                child: Stack(
+                child: const Stack(
                   children: [
                     // The image is now the background, so no need for a Positioned Image.asset here
                     // Removed the CircleAvatar as requested
@@ -181,24 +181,16 @@ class HomePage extends StatelessWidget {
               child: Container(
                 height: screenHeight * 0.15,
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: Colors.green, // This color will only be visible if the image doesn't load
                   borderRadius: BorderRadius.circular(screenWidth * 0.04),
+                  // Set greenbanner.png as the background image
                   image: const DecorationImage(
-                    image: NetworkImage(
-                        'https://placehold.co/600x100/3CB371/FFFFFF?text=Special+Offer'),
-                    fit: BoxFit.cover,
+                    image: AssetImage('assets/images/greenbanner.png'), // Your new green banner image
+                    fit: BoxFit.cover, // This makes the image cover the entire container
+                    alignment: Alignment.center, // Center the image within the box
                   ),
                 ),
-                child: Center(
-                  child: Text(
-                    'Get 20% Off All\nMulti-Function Items!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: screenWidth * 0.045 / textScaleFactor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
+                // Removed the Center widget containing the Text
               ),
             ),
 
@@ -236,39 +228,23 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-            // Modular Headphones Banner
+            // Modular Headphones Banner - UPDATED TO USE bluebanner.png
             Padding(
               padding: EdgeInsets.all(screenWidth * 0.04),
               child: Container(
                 height: screenHeight * 0.2,
                 decoration: BoxDecoration(
-                  color: Colors.blueAccent,
+                  color: Colors.blueAccent, // This color will only be visible if the image doesn't load
                   borderRadius: BorderRadius.circular(screenWidth * 0.04),
                   image: const DecorationImage(
-                    image: NetworkImage(
-                        'https://placehold.co/600x150/4682B4/FFFFFF?text=Modular+Headphones'),
-                    fit: BoxFit.cover,
+                    image: AssetImage('assets/images/bluebanner.png'), // Your new blue banner image
+                    fit: BoxFit.cover, // This makes the image cover the entire container
+                    alignment: Alignment.center, // Center the image within the box
                   ),
                 ),
-                child: Stack(
+                child: const Stack( // Keep Stack if you might add overlay elements later, otherwise can be removed
                   children: [
-                    Positioned(
-                      top: screenHeight * 0.03,
-                      left: screenWidth * 0.05,
-                      child: Text(
-                        'Modular\nHeadphone',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: screenWidth * 0.045 / textScaleFactor,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: screenHeight * 0.015,
-                      right: screenWidth * 0.025,
-                      child: Icon(Icons.headphones,
-                          size: screenWidth * 0.15, color: Colors.white),
-                    ),
+                    // Removed the Positioned Text and Icon as the image now covers the area
                   ],
                 ),
               ),
@@ -385,7 +361,7 @@ class HomePage extends StatelessWidget {
                   _buildNewsCard(
                     'How to apply the right makeup for your skin tone',
                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                    'https://placehold.co/100x80/CCCCCC/000000?text=News1', // News images remain NetworkImage
+                    'assets/images/news.png', // Changed to local asset
                     screenWidth,
                     screenHeight,
                     textScaleFactor,
@@ -393,7 +369,7 @@ class HomePage extends StatelessWidget {
                   _buildNewsCard(
                     'Best furniture for your new home',
                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                    'https://placehold.co/100x80/CCCCCC/000000?text=News2', // News images remain NetworkImage
+                    'assets/images/news.png', // Changed to local asset
                     screenWidth,
                     screenHeight,
                     textScaleFactor,
@@ -401,7 +377,7 @@ class HomePage extends StatelessWidget {
                   _buildNewsCard(
                     'Top 5 places to visit in Bali for your next vacation',
                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                    'https://placehold.co/100x80/CCCCCC/000000?text=News3', // News images remain NetworkImage
+                    'assets/images/news.png', // Changed to local asset
                     screenWidth,
                     screenHeight,
                     textScaleFactor,
@@ -467,12 +443,26 @@ class HomePage extends StatelessWidget {
   Widget _buildCategoryItem(IconData icon, String label, double screenWidth, double screenHeight, double textScaleFactor) {
     return Column(
       children: [
-        CircleAvatar(
-          radius: screenWidth * 0.06, // Responsive radius
-          backgroundColor: Colors.grey[200],
-          child: Icon(icon, color: Colors.black, size: screenWidth * 0.06), // Responsive icon size
+        Container( // Wrap CircleAvatar in a Container for shadow
+          decoration: BoxDecoration(
+            color: Colors.white, // White background as seen in the image
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2), // Subtle shadow
+                spreadRadius: 1,
+                blurRadius: 3,
+                offset: const Offset(0, 2), // Position of shadow
+              ),
+            ],
+          ),
+          child: CircleAvatar(
+            radius: screenWidth * 0.06, // Responsive radius
+            backgroundColor: Colors.transparent, // Make CircleAvatar transparent to show Container's color/shadow
+            child: Icon(icon, color: Colors.black87, size: screenWidth * 0.06), // Softer black for icon
+          ),
         ),
-        SizedBox(height: screenHeight * 0.008),
+        SizedBox(height: screenHeight * 0.008), // Spacing between icon and text
         Text(
           label,
           style: TextStyle(fontSize: screenWidth * 0.03 / textScaleFactor, color: Colors.black), // Responsive font size
@@ -618,8 +608,8 @@ class HomePage extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(screenWidth * 0.025),
-            child: Image.network( // News cards still use NetworkImage
-              imageUrl,
+            child: Image.asset( // Changed from Image.network to Image.asset
+              imageUrl, // This will now be 'assets/images/news.png'
               width: screenWidth * 0.25, // Responsive width
               height: screenWidth * 0.2, // Responsive height
               fit: BoxFit.cover,

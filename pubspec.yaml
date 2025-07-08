@@ -65,6 +65,9 @@ flutter:
   assets:
      - assets/images/headphone.jpg
      - assets/images/banner.png
+     - assets/images/greenbanner.png
+     - assets/images/bluebanner.png
+     - assets/images/news.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
