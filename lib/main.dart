@@ -6,8 +6,9 @@ import 'screens/home_page.dart'; // Assuming this is your HomePage
 import 'screens/detail_product_page.dart'; // Your detail product page
 import 'screens/signin_page.dart'; // Import your SignInPage
 import 'providers/app_data_provider.dart';
-import 'package:ecommerce/screens/news_page.dart'; // New: Import NewsPage
-import 'package:ecommerce/screens/detailed_news_page.dart'; // New: Import DetailedNewsPage
+import 'package:ecommerce/screens/news_page.dart'; // Import NewsPage
+import 'package:ecommerce/screens/detailed_news_page.dart'; // Import DetailedNewsPage
+import 'package:ecommerce/screens/search.dart'; // <--- Corrected: Import search.dart
 
 // Define a global key for GoRouter for navigation from non-widget contexts
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -30,13 +31,13 @@ final GoRouter _router = GoRouter(
           },
         ),
         GoRoute(
-          path: 'news', // New: Route for the main News listing page
+          path: 'news', // Route for the main News listing page
           builder: (BuildContext context, GoRouterState state) {
             return const NewsPage();
           },
         ),
         GoRoute(
-          path: 'news_detail/:newsId', // New: Route for individual detailed news
+          path: 'news_detail/:newsId', // Route for individual detailed news
           builder: (BuildContext context, GoRouterState state) {
             final String? newsId = state.pathParameters['newsId'];
             return DetailNewsPage(newsId: newsId); // This should now find the class
@@ -57,6 +58,13 @@ final GoRouter _router = GoRouter(
       path: '/signin', // This is the route path for your sign-in page
       builder: (BuildContext context, GoRouterState state) {
         return const SignInPage();
+      },
+    ),
+    // <--- Corrected: Route for the SearchPage
+    GoRoute(
+      path: '/search',
+      builder: (BuildContext context, GoRouterState state) {
+        return const SearchPage();
       },
     ),
     // Example route for /detail, as used in your HomePage's cart button

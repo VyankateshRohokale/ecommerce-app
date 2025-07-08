@@ -1,5 +1,5 @@
-// lib/screens/detail_product_page.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart'; // Keep go_router import if you plan to use context.pop()
 
 class DetailProductPage extends StatelessWidget { // Class name also corrected
   final String? productId;
@@ -15,15 +15,30 @@ class DetailProductPage extends StatelessWidget { // Class name also corrected
     final textScaleFactor = mediaQuery.textScaler.scale(1.0);
 
     final String productName = extra?['productName'] ?? 'Unknown Product';
-    final String imageUrl = extra?['imageUrl'] ?? 'https://placehold.co/200x200/CCCCCC/000000?text=No+Image';
+    // Changed to local asset path to display the headphone image
+    final String imageUrl = extra?['imageUrl'] ?? 'assets/images/headphone.jpg';
     final String newPrice = extra?['newPrice'] ?? 'N/A';
 
     return Scaffold(
       appBar: AppBar(
+        // Re-adding background color and elevation for consistent AppBar style
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            context.pop(); // Navigate back
+          },
+        ),
         title: Text(
           productName,
-          style: TextStyle(fontSize: screenWidth * 0.05 / textScaleFactor),
+          style: TextStyle(
+            color: Colors.black, // Ensure text color is visible on white AppBar
+            fontWeight: FontWeight.bold, // Keep bold for consistency
+            fontSize: screenWidth * 0.05 / textScaleFactor,
+          ),
         ),
+        centerTitle: true, // Center the title
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -33,11 +48,25 @@ class DetailProductPage extends StatelessWidget { // Class name also corrected
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(screenWidth * 0.04),
-                child: Image.network(
+                // Changed back to Image.asset to load the local headphone image
+                child: Image.asset(
                   imageUrl,
                   height: screenHeight * 0.3,
                   width: double.infinity,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain, // <--- Changed from BoxFit.cover to BoxFit.contain
+                  // Added errorBuilder for robustness with local assets
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: screenHeight * 0.3,
+                      width: double.infinity,
+                      color: Colors.grey[300],
+                      child: Icon(
+                        Icons.broken_image,
+                        size: screenWidth * 0.2,
+                        color: Colors.grey[600],
+                      ),
+                    );
+                  },
                 ),
               ),
               SizedBox(height: screenHeight * 0.02),
