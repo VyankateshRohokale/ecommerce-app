@@ -51,8 +51,8 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
             onPressed: () {
-              // Handle search tap - Navigate to the SearchPage
-              context.go('/search'); // Navigates to the SearchPage
+              // Handle search tap - Navigate to the SearchPage using push
+              context.push('/search'); // <--- Changed from context.go to context.push
             },
           ),
           IconButton(
@@ -74,8 +74,8 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
               child: GestureDetector( // <--- Added GestureDetector here
                 onTap: () {
-                  // Navigate to the SearchPage when the search bar is tapped
-                  context.go('/search');
+                  // Navigate to the SearchPage when the search bar is tapped using push
+                  context.push('/search'); // <--- Changed from context.go to context.push
                 },
                 child: AbsorbPointer( // <--- Added AbsorbPointer to make TextField non-editable on tap
                   child: TextField(
