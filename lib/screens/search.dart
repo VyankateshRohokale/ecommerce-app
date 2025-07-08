@@ -127,7 +127,7 @@ class SearchPage extends StatelessWidget {
                     onPressed: () {
                       // Handle "See All" for featured products
                       debugPrint('See All Featured Products tapped');
-                      // context.go('/featured_products'); // Example navigation
+                      // context.push('/featured_products'); // Example navigation
                     },
                     child: Text(
                       'See All',
@@ -212,8 +212,8 @@ class SearchPage extends StatelessWidget {
       double textScaleFactor) {
     return GestureDetector(
       onTap: () {
-        // Example of go_router navigation to a product detail page
-        context.go('/product_detail/product_${title.hashCode}', extra: {'productName': title, 'imageUrl': imageUrl, 'newPrice': price});
+        // Changed from context.go to context.push for proper navigation stack
+        context.push('/product_detail/product_${title.hashCode}', extra: {'productName': title, 'imageUrl': imageUrl, 'newPrice': price});
       },
       child: Container(
         width: screenWidth * 0.4, // Responsive width
@@ -235,11 +235,11 @@ class SearchPage extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(screenWidth * 0.025)),
-              child: Image.asset( // Changed from Image.network to Image.asset
-                imageUrl, // This will now be 'assets/images/headphone.jpg'
+              child: Image.asset(
+                imageUrl,
                 height: screenWidth * 0.25, // Responsive height
                 width: double.infinity,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain, // Changed from BoxFit.cover to BoxFit.contain
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     height: screenWidth * 0.25,
