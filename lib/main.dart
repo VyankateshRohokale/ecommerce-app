@@ -1,3 +1,4 @@
+import 'package:ecommerce/screens/news_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -6,9 +7,8 @@ import 'screens/home_page.dart'; // Assuming this is your HomePage
 import 'screens/detail_product_page.dart'; // Your detail product page
 import 'screens/signin_page.dart'; // Import your SignInPage
 import 'providers/app_data_provider.dart';
-import 'package:ecommerce/screens/news_page.dart'; // Import NewsPage
-import 'package:ecommerce/screens/detailed_news_page.dart'; // Import DetailedNewsPage
-import 'package:ecommerce/screens/search.dart'; // <--- Corrected: Import search.dart
+import 'screens/detailed_news_page.dart'; // Corrected import path for DetailedNewsPage
+import 'screens/search.dart'; // Corrected import path for SearchPage (assuming file is search_page.dart)
 
 // Define a global key for GoRouter for navigation from non-widget contexts
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -40,13 +40,14 @@ final GoRouter _router = GoRouter(
           path: 'news_detail/:newsId', // Route for individual detailed news
           builder: (BuildContext context, GoRouterState state) {
             final String? newsId = state.pathParameters['newsId'];
-            return DetailNewsPage(newsId: newsId); // This should now find the class
+            // This line correctly uses 'DetailedNewsPage'
+            return DetailNewsPage(newsId: newsId);
           },
         ),
         // Add more routes as your app grows
       ],
     ),
-    // Define the route for your HomePage explicitly
+    // Define the route for your HomePage explicitly (kept as per your provided code)
     GoRoute(
       path: '/home', // Explicit route for HomePage
       builder: (BuildContext context, GoRouterState state) {
@@ -60,11 +61,11 @@ final GoRouter _router = GoRouter(
         return const SignInPage();
       },
     ),
-    // <--- Corrected: Route for the SearchPage
+    // Route for the SearchPage
     GoRoute(
       path: '/search',
       builder: (BuildContext context, GoRouterState state) {
-        return const SearchPage();
+        return const SearchPage(); // Uses the SearchPage class
       },
     ),
     // Example route for /detail, as used in your HomePage's cart button
