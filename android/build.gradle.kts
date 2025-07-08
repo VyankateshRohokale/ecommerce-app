@@ -11,7 +11,7 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0") // Use your current Kotlin version
         
         // This is the line for Firebase Google Services plugin
-        classpath("com.google.gms:google-services:4.4.3") // Use the version Firebase recommends
+        classpath("com.google.gms:google-services:4.4.1") // Use the version Firebase recommends
     }
 }
 
