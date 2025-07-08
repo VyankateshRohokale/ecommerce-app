@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/home_page.dart';
-import 'screens/detail_product_page.dart';
+import 'screens/home_page.dart'; // Assuming this is your HomePage
+import 'screens/detail_product_page.dart'; // Your detail product page
+import 'screens/signin_page.dart'; // <--- Import your SignInPage
 import 'providers/app_data_provider.dart';
 
 // Define a global key for GoRouter for navigation from non-widget contexts
@@ -16,7 +17,7 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const HomePage();
+        return const HomePage(); // Your initial route, typically HomePage
       },
       routes: <RouteBase>[
         GoRoute(
@@ -28,6 +29,34 @@ final GoRouter _router = GoRouter(
         ),
         // Add more routes as your app grows
       ],
+    ),
+    // Define the route for your SignInPage
+    GoRoute(
+      path: '/signin', // <--- This is the route path for your sign-in page
+      builder: (BuildContext context, GoRouterState state) {
+        return const SignInPage();
+      },
+    ),
+    // Example route for /detail, as used in your HomePage's cart button
+    GoRoute(
+      path: '/detail',
+      builder: (BuildContext context, GoRouterState state) {
+        return Scaffold(
+          appBar: AppBar(title: const Text('Detail Screen')),
+          body: const Center(child: Text('This is a generic detail screen.')),
+        );
+      },
+    ),
+    // Example route for categories, as used in your HomePage's section headers
+    GoRoute(
+      path: '/category/:name',
+      builder: (BuildContext context, GoRouterState state) {
+        final categoryName = state.pathParameters['name'];
+        return Scaffold(
+          appBar: AppBar(title: Text('Category: ${categoryName ?? 'Unknown'}')),
+          body: Center(child: Text('Content for ${categoryName ?? 'Unknown'} category')),
+        );
+      },
     ),
   ],
   // Optional: Add an error page for unknown routes
