@@ -160,8 +160,9 @@ class _SignInPageState extends State<SignInPage> {
                   print('Email/Phone: ${_emailPhoneController.text}');
                   print('Password: ${_passwordController.text}');
                   ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Sign In button pressed!')));
-                  // context.go('/home'); // Example navigation after sign in
+                      SnackBar(content: Text('Sign In button pressed! Navigating to Home Page.')));
+                  // Navigate to the HomePage
+                  context.go('/home'); // <--- Navigates to the HomePage
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue, // Button background color

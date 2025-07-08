@@ -1,17 +1,16 @@
-import 'package:ecommerce/screens/news_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/home_page.dart';
-import 'screens/detail_product_page.dart';
-import 'providers/app_data_provider.dart';
-import 'screens/detailed_news_page.dart'; // <--- CHANGE THIS LINE to match your file name
+import 'screens/home_page.dart'; // Assuming this is your HomePage
+import 'screens/detail_product_page.dart'; // Your detail product page
 import 'screens/signin_page.dart'; // Import your SignInPage
+import 'providers/app_data_provider.dart';
+import 'package:ecommerce/screens/news_page.dart'; // New: Import NewsPage
+import 'package:ecommerce/screens/detailed_news_page.dart'; // New: Import DetailedNewsPage
 
 // Define a global key for GoRouter for navigation from non-widget contexts
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
-
 
 // Define your GoRouter instance
 final GoRouter _router = GoRouter(
@@ -31,19 +30,27 @@ final GoRouter _router = GoRouter(
           },
         ),
         GoRoute(
-          path: 'news', // Route for the main News listing page
+          path: 'news', // New: Route for the main News listing page
           builder: (BuildContext context, GoRouterState state) {
             return const NewsPage();
           },
         ),
         GoRoute(
-          path: 'news_detail/:newsId', // Route for individual detailed news
+          path: 'news_detail/:newsId', // New: Route for individual detailed news
           builder: (BuildContext context, GoRouterState state) {
             final String? newsId = state.pathParameters['newsId'];
             return DetailNewsPage(newsId: newsId); // This should now find the class
           },
         ),
+        // Add more routes as your app grows
       ],
+    ),
+    // Define the route for your HomePage explicitly
+    GoRoute(
+      path: '/home', // Explicit route for HomePage
+      builder: (BuildContext context, GoRouterState state) {
+        return const HomePage();
+      },
     ),
     // Define the route for your SignInPage
     GoRoute(
