@@ -51,8 +51,8 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
             onPressed: () {
-              // Navigate to the SearchPage when the search icon is tapped
-              context.go('/search');
+              // Handle search tap - Navigate to the SearchPage
+              context.go('/search'); // Navigates to the SearchPage
             },
           ),
           IconButton(
@@ -69,33 +69,35 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Search Bar Section - Made clickable
-            GestureDetector(
-              onTap: () {
-                // Navigate to the SearchPage when the search bar is tapped
-                context.go('/search');
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
-                child: TextField(
-                  enabled: false, // Disable TextField interaction directly to allow GestureDetector to handle tap
-                  decoration: InputDecoration(
-                    hintText: 'Search here...',
-                    hintStyle: TextStyle(fontSize: screenWidth * 0.035 / textScaleFactor),
-                    prefixIcon: Icon(Icons.search, color: Colors.grey, size: screenWidth * 0.05),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(screenWidth * 0.025),
-                      borderSide: BorderSide.none, // No border line
+            // Search Bar Section
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
+              child: GestureDetector( // <--- Added GestureDetector here
+                onTap: () {
+                  // Navigate to the SearchPage when the search bar is tapped
+                  context.go('/search');
+                },
+                child: AbsorbPointer( // <--- Added AbsorbPointer to make TextField non-editable on tap
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search here...',
+                      hintStyle: TextStyle(fontSize: screenWidth * 0.035 / textScaleFactor),
+                      prefixIcon: Icon(Icons.search, color: Colors.grey, size: screenWidth * 0.05),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(screenWidth * 0.025),
+                        borderSide: BorderSide.none, // No border line
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[200], // Light grey background
+                      contentPadding: EdgeInsets.symmetric(vertical: screenHeight * 0.015), // Responsive padding
                     ),
-                    filled: true,
-                    fillColor: Colors.grey[200], // Light grey background
-                    contentPadding: EdgeInsets.symmetric(vertical: screenHeight * 0.015), // Responsive padding
+                    style: TextStyle(fontSize: screenWidth * 0.04 / textScaleFactor),
+                    onSubmitted: (value) {
+                      // This will still work if the user types and presses enter,
+                      // but the primary interaction is now the tap to navigate.
+                      debugPrint('Search submitted from HomePage search bar: $value');
+                    },
                   ),
-                  style: TextStyle(fontSize: screenWidth * 0.04 / textScaleFactor),
-                  onSubmitted: (value) {
-                    // This will ideally not be called if TextField is disabled, but kept for completeness
-                    debugPrint('Search submitted: $value');
-                  },
                 ),
               ),
             ),
@@ -451,6 +453,7 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             _selectedIndex = index; // Update the selected index
           });
+          debugPrint('BottomNavigationBar tapped at index: $index'); // Debug print
           switch (index) {
             case 0: // Home
               context.go('/'); // Navigate to the root (HomePage)
@@ -462,7 +465,8 @@ class _HomePageState extends State<HomePage> {
             // context.go('/my_order'); // You might need to define this route
               break;
             case 3: // Profile
-              context.go('/signin'); // Navigate to the sign-in page
+              debugPrint('Profile icon tapped. Showing login dialog.');
+              _showLoginRequiredDialog(context, screenWidth, screenHeight, textScaleFactor); // Show the dialog
               break;
           }
         },
@@ -651,8 +655,8 @@ class _HomePageState extends State<HomePage> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    width: screenWidth * 0.25,
-                    height: screenWidth * 0.2,
+                    height: screenWidth * 0.25,
+                    width: double.infinity,
                     color: Colors.grey[300],
                     child: Icon(Icons.broken_image, color: Colors.grey[600]),
                   );
@@ -683,6 +687,98 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+    );
+  }
+
+  // New helper method to show the login required dialog
+  void _showLoginRequiredDialog(BuildContext context, double screenWidth, double screenHeight, double textScaleFactor) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(screenWidth * 0.04), // Responsive border radius
+          ),
+          elevation: 0,
+          backgroundColor: Colors.white,
+          child: Container(
+            padding: EdgeInsets.all(screenWidth * 0.05), // Responsive padding
+            width: screenWidth * 0.8, // Responsive width
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: Icon(Icons.close, color: Colors.grey, size: screenWidth * 0.06), // Responsive icon size
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(); // Close the dialog
+                    },
+                  ),
+                ),
+                Text(
+                  'Login Account',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.055 / textScaleFactor,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                Text(
+                  '👋', // Waving hand emoji
+                  style: TextStyle(fontSize: screenWidth * 0.15), // Large emoji size
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                Text(
+                  'Anda perlu masuk terlebih dahulu',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.045 / textScaleFactor,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: screenHeight * 0.01),
+                Text(
+                  'Silahkan login/ register terlebih dahulu\nuntuk melakukan transaksi',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.035 / textScaleFactor,
+                    color: Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: screenHeight * 0.04),
+                SizedBox(
+                  width: double.infinity,
+                  height: screenHeight * 0.06, // Responsive button height
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(); // Close the dialog first
+                      context.go('/signin'); // Navigate to the sign-in page
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                      ),
+                    ),
+                    child: Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: screenWidth * 0.045 / textScaleFactor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
