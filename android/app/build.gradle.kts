@@ -14,13 +14,13 @@ android {
     // Removed: ndkVersion = "27.0.12077973"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
         // Removed: isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = '1.8'
     }
 
     defaultConfig {
@@ -47,6 +47,7 @@ flutter {
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
     // Removed: coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     // Removed Firebase BoM and specific Firebase product dependencies
     // implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
