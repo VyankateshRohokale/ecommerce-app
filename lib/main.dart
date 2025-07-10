@@ -1,30 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart'; // Import provider package
+import 'package:provider/provider.dart';
 
-import 'package:ecommerce/providers/favorite_provider.dart'; // Import your FavoriteProvider
+import 'package:ecommerce/providers/favorite_provider.dart';
 import 'package:ecommerce/screens/home_page.dart';
 import 'package:ecommerce/screens/detail_product_page.dart';
-import 'package:ecommerce/screens/seller_info.dart'; // Corrected Import: InfoSellerPage to seller_info.dart
-import 'package:ecommerce/screens/review_product.dart'; // Corrected Import: ReviewProductPage to review_product.dart
-import 'package:ecommerce/screens/search.dart'; // Import SearchPage
-import 'package:ecommerce/screens/news_page.dart'; // Import NewsPage
-import 'package:ecommerce/screens/signin_page.dart'; // Import SignInPage
-import 'package:ecommerce/providers/app_data_provider.dart'; // Import AppDataProvider
-import 'package:ecommerce/screens/detailed_news_page.dart'; // Import DetailedNewsPage (assuming it's named DetailNewsPage class)
+import 'package:ecommerce/screens/seller_info.dart';
+import 'package:ecommerce/screens/review_product.dart';
+import 'package:ecommerce/screens/search.dart';
+import 'package:ecommerce/screens/news_page.dart';
+import 'package:ecommerce/screens/signin_page.dart';
+import 'package:ecommerce/providers/app_data_provider.dart';
+import 'package:ecommerce/screens/detailed_news_page.dart';
+import 'package:ecommerce/screens/category_product_page.dart'; 
 
-
-// Define a global key for GoRouter for navigation from non-widget contexts
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
-// Define your GoRouter instance
 final GoRouter _router = GoRouter(
-  navigatorKey: _rootNavigatorKey, // Assign the global key here
+  navigatorKey: _rootNavigatorKey,
   routes: <RouteBase>[
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const HomePage(); // Your initial route, typically HomePage
+        return const HomePage();
       },
       routes: <RouteBase>[
         GoRoute(
@@ -35,37 +33,44 @@ final GoRouter _router = GoRouter(
           },
         ),
         GoRoute(
-          path: 'seller_info', // Route for InfoSellerPage (now correctly linked to seller_info.dart)
+          path: 'seller_info',
           builder: (BuildContext context, GoRouterState state) {
-            return const InfoSellerPage(); // Assuming the class name is InfoSellerPage
+            return const InfoSellerPage();
           },
         ),
         GoRoute(
-          path: 'review_product', // Route for ReviewProductPage (now correctly linked to review_product.dart)
+          path: 'review_product',
           builder: (BuildContext context, GoRouterState state) {
-            return const ReviewProductPage(); // Assuming the class name is ReviewProductPage
+            return const ReviewProductPage();
           },
         ),
         GoRoute(
-          path: 'news', // Route for the main News listing page
+          path: 'news',
           builder: (BuildContext context, GoRouterState state) {
             return const NewsPage();
           },
         ),
         GoRoute(
-          path: 'news_detail/:newsId', // Route for individual detailed news
+          path: 'news_detail/:newsId',
           builder: (BuildContext context, GoRouterState state) {
             final String? newsId = state.pathParameters['newsId'];
             return DetailNewsPage(newsId: newsId);
           },
         ),
         GoRoute(
-          path: 'search', // Route for SearchPage
+          path: 'search',
           builder: (BuildContext context, GoRouterState state) {
             return const SearchPage();
           },
         ),
-        // Example route for /detail, as used in your HomePage's cart button
+        // THIS IS THE CRUCIAL ROUTE FOR CATEGORY PRODUCTS
+        GoRoute(
+          path: 'category_products/:categoryName',
+          builder: (BuildContext context, GoRouterState state) {
+            final String? categoryName = state.pathParameters['categoryName'];
+            return CategoryProductPage(categoryName: categoryName ?? 'Unknown Category');
+          },
+        ),
         GoRoute(
           path: 'detail',
           builder: (BuildContext context, GoRouterState state) {
@@ -75,7 +80,8 @@ final GoRouter _router = GoRouter(
             );
           },
         ),
-        // Example route for categories, as used in your HomePage's section headers
+        // This generic category route might be redundant if 'category_products' is used for all category taps
+        // You can remove this if you intend to use only 'category_products/:categoryName' for all category navigations
         GoRoute(
           path: 'category/:name',
           builder: (BuildContext context, GoRouterState state) {
@@ -88,27 +94,42 @@ final GoRouter _router = GoRouter(
         ),
       ],
     ),
-    // Define the route for your SignInPage outside the '/' nested routes
     GoRoute(
-      path: '/signin', // This is the route path for your sign-in page
+      path: '/signin',
       builder: (BuildContext context, GoRouterState state) {
         return const SignInPage();
       },
     ),
+    // You might also need routes for wishlist, my_orders, and profile if they are not nested under '/'
+    GoRoute(
+      path: '/wishlist',
+      builder: (BuildContext context, GoRouterState state) {
+        return Scaffold(appBar: AppBar(title: const Text('Wishlist')), body: const Center(child: Text('Your Wishlist')));
+      },
+    ),
+    GoRoute(
+      path: '/my_orders',
+      builder: (BuildContext context, GoRouterState state) {
+        return Scaffold(appBar: AppBar(title: const Text('My Orders')), body: const Center(child: Text('Your Orders')));
+      },
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (BuildContext context, GoRouterState state) {
+        return Scaffold(appBar: AppBar(title: const Text('Profile')), body: const Center(child: Text('Your Profile')));
+      },
+    ),
   ],
-  // Optional: Add an error page for unknown routes
-  // errorBuilder: (context, state) => ErrorScreen(error: state.error),
 );
 
-
 void main() {
-  WidgetsFlutterBinding.ensureInitialized(); // Keep this as it's good practice
+  WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppDataProvider()),
-        ChangeNotifierProvider(create: (_) => FavoriteProvider()), // Added FavoriteProvider here
+        ChangeNotifierProvider(create: (_) => FavoriteProvider()),
       ],
       child: const MyApp(),
     ),
@@ -131,7 +152,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Inter',
         ),
         routerConfig: _router,
-        debugShowCheckedModeBanner: false, // Added this back for consistency
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
